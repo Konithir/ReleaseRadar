@@ -1,0 +1,5 @@
+prefix              = "rradar"
+environment         = "prod"
+location            = "westeurope"
+system_node_count   = 3
+system_node_vm_size = "Standard_D4ds_v5"

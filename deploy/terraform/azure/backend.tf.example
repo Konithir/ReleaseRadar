@@ -1,0 +1,8 @@
+# Copy this block into versions.tf and supply an existing storage account before running terraform init.
+#
+# backend "azurerm" {
+#   resource_group_name  = "rg-terraform-state"
+#   storage_account_name = "yourtfstateaccount"
+#   container_name       = "tfstate"
+#   key                  = "release-radar-prod.tfstate"
+# }

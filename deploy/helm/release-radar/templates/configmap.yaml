@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "release-radar.fullname" . }}
+  labels:
+    {{- include "release-radar.labels" . | nindent 4 }}
+data:
+  DatabaseProvider: {{ .Values.config.databaseProvider | quote }}
+  OpenTelemetry__OtlpEndpoint: {{ .Values.config.otlpEndpoint | quote }}
+  Integrations__ArgoCd__Enabled: {{ .Values.config.argoCd.enabled | quote }}
+  Integrations__ArgoCd__BaseUrl: {{ .Values.config.argoCd.baseUrl | quote }}
+  Integrations__Kubernetes__Enabled: {{ .Values.config.kubernetes.enabled | quote }}
+  Integrations__Kubernetes__BaseUrl: {{ .Values.config.kubernetes.baseUrl | quote }}
+  Integrations__Prometheus__Enabled: {{ .Values.config.prometheus.enabled | quote }}
+  Integrations__Prometheus__BaseUrl: {{ .Values.config.prometheus.baseUrl | quote }}
+  Integrations__GitHub__Enabled: {{ .Values.config.github.enabled | quote }}
+  Integrations__GitHub__BaseUrl: {{ .Values.config.github.baseUrl | quote }}
