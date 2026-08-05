@@ -1,0 +1,55 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Deployment actions",
+      "id": 1,
+      "gridPos": { "h": 7, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "sum(increase(release_radar_deployment_actions_total[$__range]))", "refId": "A" }]
+    },
+    {
+      "type": "stat",
+      "title": "Healthy applications",
+      "id": 2,
+      "gridPos": { "h": 7, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "sum(release_radar_application_health)", "refId": "A" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP request rate",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "sum(rate(http_requests_received_total[5m])) by (code)", "legendFormat": "{{code}}", "refId": "A" }]
+    },
+    {
+      "type": "logs",
+      "title": "API logs",
+      "id": 4,
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "loki", "uid": "loki" },
+      "targets": [{ "expr": "{app=\"release-radar\"}", "refId": "A" }]
+    },
+    {
+      "type": "traces",
+      "title": "Recent traces",
+      "id": 5,
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [{ "query": "{ resource.service.name = \"release-radar-api\" }", "queryType": "traceql", "refId": "A" }]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 40,
+  "tags": ["release-radar", "kubernetes"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "ReleaseRadar operations",
+  "uid": "release-radar-ops",
+  "version": 1
+}
