@@ -1,0 +1,27 @@
+# Build output
+**/bin/
+**/obj/
+frontend/node_modules/
+frontend/dist/
+.angular/
+
+# Local runtime
+artifacts/
+*.db
+.env
+*.user
+*.suo
+.vs/
+.vscode/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+
+# Operating systems
+.DS_Store
+Thumbs.db
