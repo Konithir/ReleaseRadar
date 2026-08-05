@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore ReleaseRadar.sln
+      - name: Build
+        run: dotnet build ReleaseRadar.sln --configuration Release --no-restore --warnaserror
+      - name: Test
+        run: dotnet test ReleaseRadar.sln --configuration Release --no-build --collect:"XPlat Code Coverage"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Enable pnpm
+        run: corepack enable && corepack prepare pnpm@11.9.0 --activate
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Test
+        run: pnpm exec ng test --watch=false
+      - name: Build
+        run: pnpm run build
+
+  infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.0
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.17.1
+      - name: Terraform format
+        run: terraform fmt -check -recursive deploy/terraform/azure
+      - name: Terraform validate
+        working-directory: deploy/terraform/azure
+        run: terraform init -backend=false && terraform validate
+      - name: Helm lint
+        run: helm lint deploy/helm/release-radar
+      - name: Render Helm manifests
+        run: helm template release-radar deploy/helm/release-radar --set secrets.create=true --set secrets.connectionString=Server=test --set api.image.tag=ci --set web.image.tag=ci > /tmp/release-radar.yaml
+
+  containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -f src/ReleaseRadar.Api/Dockerfile -t release-radar-api:ci .
+      - name: Build web image
+        run: docker build -f frontend/Dockerfile -t release-radar-web:ci frontend
