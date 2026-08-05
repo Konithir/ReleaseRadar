@@ -27,7 +27,7 @@ describe('App', () => {
   });
 
   it('renders the deployment heading', () => {
-    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Deployments under control');
+    expect(fixture.nativeElement.querySelector('h1').textContent).toBe('Deployments');
   });
 
   it('starts with all environments visible', () => {

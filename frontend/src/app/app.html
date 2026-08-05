@@ -43,7 +43,7 @@
         <label class="global-search">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
           <input #search type="search" placeholder="Search applications" [value]="query()" (input)="query.set(search.value)">
-          <kbd>⌘ K</kbd>
+          <kbd>âŒ˜ K</kbd>
         </label>
         <button class="icon-button" aria-label="Notifications">
           <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/></svg><span></span>
@@ -57,12 +57,12 @@
 
     <section class="page-intro">
       <div>
-        <p class="eyebrow"><span></span> Kubernetes delivery</p>
-        <h1>Deployments under control.</h1>
-        <p>Live state from Argo CD and Kubernetes, with rollout metrics and revision history in one place.</p>
+        <p class="eyebrow"><span></span> Release status</p>
+        <h1>Deployments</h1>
+        <p>Argo CD and Kubernetes state across connected clusters.</p>
       </div>
       <div class="intro-meta">
-        <div><span>Last reconciled</span><strong>{{ overview()?.generatedAt ? elapsed(overview()!.generatedAt) : '—' }}</strong></div>
+        <div><span>Last reconciled</span><strong>{{ overview()?.generatedAt ? elapsed(overview()!.generatedAt) : 'â€”' }}</strong></div>
         <div><span>Control plane</span><strong class="success-text"><i></i> Operational</strong></div>
       </div>
     </section>
@@ -70,17 +70,17 @@
     <section class="metric-grid" aria-label="Deployment summary">
       <article class="metric-card primary-metric">
         <div class="metric-top"><span>Applications</span><i class="metric-icon"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Zm-8 9 8 4.5 8-4.5M4 16.5l8 4.5 8-4.5"/></svg></i></div>
-        <div class="metric-value">{{ overview()?.applications ?? '—' }} <small>tracked</small></div>
+        <div class="metric-value">{{ overview()?.applications ?? 'â€”' }} <small>tracked</small></div>
         <div class="mini-bars"><i style="height:35%"></i><i style="height:48%"></i><i style="height:43%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:88%"></i><i style="height:76%"></i><i style="height:100%"></i></div>
       </article>
       <article class="metric-card">
         <div class="metric-top"><span>Healthy</span><i class="metric-icon lime"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></i></div>
-        <div class="metric-value">{{ overview()?.healthy ?? '—' }} <small>{{ healthyPercent() }}% fleet</small></div>
-        <div class="metric-foot positive"><span>↑ 2 this week</span><em>Stable</em></div>
+        <div class="metric-value">{{ overview()?.healthy ?? 'â€”' }} <small>{{ healthyPercent() }}% fleet</small></div>
+        <div class="metric-foot positive"><span>â†‘ 2 this week</span><em>Stable</em></div>
       </article>
       <article class="metric-card">
         <div class="metric-top"><span>In progress</span><i class="metric-icon blue"><svg viewBox="0 0 24 24"><path d="M12 3v4m0 10v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8m0-12.8-2.8 2.8m-7.2 7.2-2.8 2.8"/></svg></i></div>
-        <div class="metric-value">{{ overview()?.progressing ?? '—' }} <small>rolling out</small></div>
+        <div class="metric-value">{{ overview()?.progressing ?? 'â€”' }} <small>rolling out</small></div>
         <div class="metric-foot"><span>Argo CD sync</span><em class="live-label">Live</em></div>
       </article>
       <article class="metric-card warning-card">
@@ -95,14 +95,14 @@
         <section class="panel fleet-panel">
           <header class="panel-header">
             <div><p class="section-kicker">Cluster fleet</p><h2>Runtime capacity</h2></div>
-            <button class="text-button">View all clusters <span>→</span></button>
+            <button class="text-button">View all clusters <span>â†’</span></button>
           </header>
           <div class="cluster-grid">
             @for (cluster of overview()?.clusters ?? []; track cluster.name; let index = $index) {
               <article class="cluster-card" [class.featured]="index === 0">
                 <div class="cluster-head">
                   <span class="cluster-symbol"><i></i><i></i><i></i></span>
-                  <div><strong>{{ cluster.name }}</strong><small>{{ cluster.region }} · {{ cluster.version }}</small></div>
+                  <div><strong>{{ cluster.name }}</strong><small>{{ cluster.region }} Â· {{ cluster.version }}</small></div>
                   <span class="state-pill" [class.attention]="cluster.health !== 'Healthy'"><i></i>{{ cluster.health }}</span>
                 </div>
                 <div class="cluster-stats">
@@ -141,13 +141,13 @@
               <button class="table-row application-row" [class.selected]="selected()?.id === application.id" (click)="loadApplication(application.name)">
                 <span class="app-cell">
                   <i class="app-glyph" [attr.data-letter]="application.name.charAt(0).toUpperCase()"></i>
-                  <span><strong>{{ application.name }}</strong><small>{{ application.team }} · {{ application.namespace }}</small></span>
+                  <span><strong>{{ application.name }}</strong><small>{{ application.team }} Â· {{ application.namespace }}</small></span>
                 </span>
                 <span><em class="environment-tag" [class]="application.environment">{{ application.environment }}</em></span>
                 <span class="revision-cell"><code>{{ shortRevision(application.liveRevision) }}</code><small>{{ elapsed(application.lastDeploymentAt) }}</small></span>
                 <span class="replica-cell"><strong>{{ application.readyReplicas }}/{{ application.desiredReplicas }}</strong><span class="replica-dots">@for (dot of [].constructor(application.desiredReplicas); track $index) {<i [class.ready]="$index < application.readyReplicas"></i>}</span></span>
                 <span><em class="health-pill" [class]="statusClass(application.health)"><i></i>{{ application.health }}</em></span>
-                <span class="row-menu" aria-hidden="true">•••</span>
+                <span class="row-menu" aria-hidden="true">â€¢â€¢â€¢</span>
               </button>
             } @empty {
               <div class="empty-state">No applications match the current filters.</div>
@@ -166,7 +166,7 @@
                 <span class="activity-icon" [class]="statusClass(event.status)">
                   <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
                 </span>
-                <div><strong>{{ event.application }}</strong><p>{{ event.message }}</p><small>{{ event.actor }} · {{ shortRevision(event.revision) }}</small></div>
+                <div><strong>{{ event.application }}</strong><p>{{ event.message }}</p><small>{{ event.actor }} Â· {{ shortRevision(event.revision) }}</small></div>
                 <time>{{ elapsed(event.occurredAt) }}</time>
               </article>
             }
@@ -178,7 +178,7 @@
         @if (selected(); as application) {
           <header class="detail-header">
             <div class="detail-app-title"><i class="app-glyph large" [attr.data-letter]="application.name.charAt(0).toUpperCase()"></i><div><span>{{ application.team }}</span><h2>{{ application.name }}</h2></div></div>
-            <button class="icon-button small" aria-label="More actions">•••</button>
+            <button class="icon-button small" aria-label="More actions">â€¢â€¢â€¢</button>
           </header>
 
           <div class="detail-status-row">
@@ -223,7 +223,7 @@
               @for (event of application.timeline.slice(0, 4); track event.id; let first = $first) {
                 <article [class.current]="first">
                   <i><span></span></i>
-                  <div><strong>{{ event.action }} · {{ event.status }}</strong><p>{{ event.message }}</p><small>{{ event.actor }} · {{ elapsed(event.occurredAt) }}</small></div>
+                  <div><strong>{{ event.action }} Â· {{ event.status }}</strong><p>{{ event.message }}</p><small>{{ event.actor }} Â· {{ elapsed(event.occurredAt) }}</small></div>
                 </article>
               }
             </div>
@@ -245,7 +245,7 @@
 @if (pendingAction(); as pending) {
   <div class="modal-backdrop" (click)="pendingAction.set(null)">
     <section class="confirm-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="pendingAction.set(null)" aria-label="Close">×</button>
+      <button class="modal-close" (click)="pendingAction.set(null)" aria-label="Close">Ã—</button>
       <span class="modal-icon" [class.rollback]="pending.type === 'rollback'">
         <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
       </span>
@@ -253,11 +253,11 @@
       <h2>{{ actionLabel(pending.type) }}</h2>
       <p>{{ pending.type === 'sync' ? 'Apply the latest repository revision to' : 'Restore the previous stable revision of' }} <strong>{{ pending.application.name }}</strong> in <strong>{{ pending.application.environment }}</strong>.</p>
       <div class="modal-summary"><span>Current revision</span><code>{{ shortRevision(pending.application.liveRevision) }}</code><span>Cluster</span><strong>{{ pending.application.cluster }}</strong></div>
-      <div class="modal-actions"><button class="secondary-action" (click)="pendingAction.set(null)">Cancel</button><button class="primary-action" [class.danger]="pending.type === 'rollback'" [disabled]="acting()" (click)="confirmAction()">{{ acting() ? 'Working…' : actionLabel(pending.type) }}</button></div>
+      <div class="modal-actions"><button class="secondary-action" (click)="pendingAction.set(null)">Cancel</button><button class="primary-action" [class.danger]="pending.type === 'rollback'" [disabled]="acting()" (click)="confirmAction()">{{ acting() ? 'Workingâ€¦' : actionLabel(pending.type) }}</button></div>
     </section>
   </div>
 }
 
 @if (toast(); as message) {
-  <div class="toast"><span>✓</span>{{ message }}</div>
+  <div class="toast"><span>âœ“</span>{{ message }}</div>
 }
